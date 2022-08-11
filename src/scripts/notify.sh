@@ -9,8 +9,7 @@ BuildMessageBody() {
     if [ -n "${SLACK_PARAM_CUSTOM:-}" ]; then
         ModifyCustomTemplate
         # shellcheck disable=SC2016
-        CUSTOM_BODY_MODIFIED=$(echo "$CUSTOM_BODY_MODIFIED" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/`/\\`/g')
-        T2=$(eval echo \""$CUSTOM_BODY_MODIFIED"\")
+        BODY_JSON=$(echo "$CUSTOM_BODY_MODIFIED" | jq '@json')
     else
         # shellcheck disable=SC2154
         if [ -n "${SLACK_PARAM_TEMPLATE:-}" ]; then TEMPLATE="\$$SLACK_PARAM_TEMPLATE"
@@ -22,12 +21,11 @@ BuildMessageBody() {
         [ -z "${SLACK_PARAM_TEMPLATE:-}" ] && echo "No message template was explicitly chosen. Based on the job status '$CCI_STATUS' the template '$TEMPLATE' will be used."
 
         # shellcheck disable=SC2016
-        T1=$(eval echo "$TEMPLATE" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/`/\\`/g')
-        T2=$(eval echo \""$T1"\")
+        BODY_JSON=$(eval echo "$TEMPLATE" | jq '@json')
     fi
     # Insert the default channel. THIS IS TEMPORARY
-    T2=$(echo "$T2" | jq ". + {\"channel\": \"$SLACK_DEFAULT_CHANNEL\"}")
-    SLACK_MSG_BODY=$T2
+    BODY_JSON=$(echo "$BODY_JSON" | jq ". + {\"channel\": \"$SLACK_DEFAULT_CHANNEL\"}")
+    SLACK_MSG_BODY=$BODY_JSON
 }
 
 PostToSlack() {
