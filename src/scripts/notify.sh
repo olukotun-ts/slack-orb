@@ -36,7 +36,6 @@ DetectOS() {
         Linux)
             . /etc/os-release
             OS_NAME=$ID
-            OS_VERSION=$VERSION_ID
             ;;
         MSYS*)
             OS_NAME="windows"
