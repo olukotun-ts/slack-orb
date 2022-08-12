@@ -9,7 +9,7 @@ BuildMessageBody() {
     if [ -n "${SLACK_PARAM_CUSTOM:-}" ]; then
         ModifyCustomTemplate
         # shellcheck disable=SC2016
-        BODY_JSON=$(echo "$CUSTOM_BODY_MODIFIED" | jq '@json')
+        BODY_JSON=$(echo "$CUSTOM_BODY_MODIFIED")
     else
         # shellcheck disable=SC2154
         if [ -n "${SLACK_PARAM_TEMPLATE:-}" ]; then TEMPLATE="\$$SLACK_PARAM_TEMPLATE"
@@ -21,10 +21,10 @@ BuildMessageBody() {
         [ -z "${SLACK_PARAM_TEMPLATE:-}" ] && echo "No message template was explicitly chosen. Based on the job status '$CCI_STATUS' the template '$TEMPLATE' will be used."
 
         # shellcheck disable=SC2016
-        BODY_JSON=$(eval echo "$TEMPLATE" | jq '@json')
+        BODY_JSON=$(eval echo "$TEMPLATE")
     fi
     # Insert the default channel. THIS IS TEMPORARY
-    BODY_JSON=$(echo "$BODY_JSON" | jq ". + {\"channel\": \"$SLACK_DEFAULT_CHANNEL\"}")
+    BODY_JSON=$(echo "$BODY_JSON" | jq ". + {\"channel\": \"$SLACK_DEFAULT_CHANNEL\"}" | '@json')
     SLACK_MSG_BODY=$BODY_JSON
 }
 
