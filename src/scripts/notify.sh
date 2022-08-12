@@ -27,22 +27,26 @@ BuildMessageBody() {
     SLACK_MSG_BODY=$(envsubst < /tmp/SLACK_MSG_BODY.json)
 }
 
+# ToDo: Add OS_VERSION for macos and windows.
 DetectOS() {
     case $(uname -s) in
         Darwin)
-            OS="macos"
+            OS_NAME="macos"
             ;;
         Linux)
-            OS="linux"
+            . /etc/os-release
+            OS_NAME=$ID
+            OS_VERSION=$VERSION_ID
             ;;
         MSYS*)
-            OS="windows"
+            OS_NAME="windows"
             ;;
         *)
-            OS="unknown"
+            OS_NAME="unknown"
             echo "OS is unknown. Result of command 'uname -s' is not one of [Darwin, Linux, MSYS*]"
             ;;
     esac
+    echo "Detected operating system: $OS_NAME"
 }
 
 PostToSlack() {
@@ -107,16 +111,21 @@ InstallEnvsubst() {
     echo "Checking For envsubst"
     if ! command -v envsubst >/dev/null 2>&1; then
         echo "Missing dependency envsubst. Installing..."
-        case $OS in
-            linux)
-                sudo apt-get update
-                sudo apt-get install gettext-base
+        case $OS_NAME in
+            alpine)
+                apk update
+                apk add gettext
                 ;;
             macos)
                 brew install gettext
                 ;;
+            ubuntu)
+                sudo apt-get update
+                sudo apt-get install gettext-base
+                ;;
             *)
                 echo >&2 "SLACK ORB ERROR: envsubst is required. Please install"; exit 1; 
+                ;;
         esac
         command -v envsubst >/dev/null 2>&1
         return $?
