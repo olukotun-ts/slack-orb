@@ -24,7 +24,7 @@ BuildMessageBody() {
         BODY_JSON=$(eval echo "$TEMPLATE")
     fi
     # Insert the default channel. THIS IS TEMPORARY
-    BODY_JSON=$(echo "$BODY_JSON" | jq ". + {\"channel\": \"$SLACK_DEFAULT_CHANNEL\"}" | '@json')
+    BODY_JSON=$(echo "$BODY_JSON" | jq ". + {\"channel\": \"$SLACK_DEFAULT_CHANNEL\"} | @json")
     SLACK_MSG_BODY=$BODY_JSON
 }
 
