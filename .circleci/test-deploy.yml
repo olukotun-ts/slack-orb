@@ -86,7 +86,7 @@ workflows:
   test-deploy:
     jobs:
       - integration-test-templates:
-          context: SLACK_NOTIFICATIONS_TEST
+          context: slack
           filters:
             tags:
               only: /.*/
