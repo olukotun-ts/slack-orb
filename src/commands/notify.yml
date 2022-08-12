@@ -105,3 +105,4 @@ steps:
         basic_on_hold_1: "<<include(message_templates/basic_on_hold_1.json)>>"
         basic_success_1: "<<include(message_templates/basic_success_1.json)>>"
       command: <<include(scripts/notify.sh)>>
+      shell: bash -eo pipefail
