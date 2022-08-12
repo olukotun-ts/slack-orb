@@ -1,4 +1,4 @@
-#!/bin/bash -eo pipefail
+#!/bin/bash
 JQ_PATH=/usr/local/bin/jq
 
 BuildMessageBody() {
