@@ -23,7 +23,9 @@ BuildMessageBody() {
         # shellcheck disable=SC2016
         MSG_BODY=$(eval echo "$TEMPLATE")
     fi
-    SLACK_MSG_BODY=$MSG_BODY
+    # Insert the default channel. THIS IS TEMPORARY
+    echo $MSG_BODY | jq '.channel = "$SLACK_DEFAULT_CHANNEL"' > /tmp/SLACK_MSG_BODY.json
+    SLACK_MSG_BODY=$(envsubst < /tmp/SLACK_MSG_BODY.json)
 }
 
 PostToSlack() {
@@ -34,7 +36,7 @@ PostToSlack() {
     for i in $(eval echo \""$SLACK_PARAM_CHANNEL"\" | sed "s/,/ /g")
     do
         echo "Sending to Slack Channel: $i"
-        SLACK_MSG_BODY=$(echo "$SLACK_MSG_BODY" | jq --arg channel "$i" '.channel = $channel')
+        SLACK_MSG_BODY=$(echo "$SLACK_MSG_BODY" | jq --arg channel "$i" '.channel += $channel')
         if [ "$SLACK_PARAM_DEBUG" -eq 1 ]; then
             printf "%s\n" "$SLACK_MSG_BODY" > "$SLACK_MSG_BODY_LOG"
             echo "The message body being sent to Slack can be found below. To view redacted values, rerun the job with SSH and access: ${SLACK_MSG_BODY_LOG}"

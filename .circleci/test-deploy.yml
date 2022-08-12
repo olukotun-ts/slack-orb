@@ -2,6 +2,7 @@ version: 2.1
 orbs:
   slack: sandboxi/slack@dev:<<pipeline.git.revision>>
   orb-tools: circleci/orb-tools@11.1
+  win: circleci/windows@5.0 
 jobs:
   integration-test-templates:
     parameters:
@@ -92,7 +93,7 @@ workflows:
               only: /.*/
           matrix:
             parameters:
-              runner: [cimg, mac, alpine]
+              runner: [cimg, mac, alpine, windows]
       - orb-tools/lint:
           filters:
             tags:
@@ -131,3 +132,5 @@ executors:
     # This image contains both CURL and JQ
     docker:
       - image: dwdraju/alpine-curl-jq
+  windows:
+    name: win/default
