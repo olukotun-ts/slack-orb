@@ -87,7 +87,7 @@ steps:
   - run:
       when: always
       name: Convert Line Endings on Windows
-      command: if uname -s | grep MSYS; then dos2unix src/scripts/notify.sh; fi
+      command: <<include(scripts/convert2unix.sh)>>
       shell: bash
   - run:
       when: always
