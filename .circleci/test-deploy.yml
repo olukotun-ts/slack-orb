@@ -132,5 +132,4 @@ executors:
     # This image contains both CURL and JQ
     docker:
       - image: dwdraju/alpine-curl-jq
-  windows:
-    name: win/default
+  windows: win/default
