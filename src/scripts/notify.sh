@@ -23,8 +23,7 @@ BuildMessageBody() {
         # shellcheck disable=SC2016
         MSG_BODY=$(eval echo "$TEMPLATE")
     fi
-    # Insert the default channel. THIS IS TEMPORARY
-    echo $MSG_BODY | jq '.channel = "$SLACK_DEFAULT_CHANNEL"' > /tmp/SLACK_MSG_BODY.json
+    echo $MSG_BODY > /tmp/SLACK_MSG_BODY.json
     SLACK_MSG_BODY=$(envsubst < /tmp/SLACK_MSG_BODY.json)
 }
 
