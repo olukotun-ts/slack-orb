@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  slack: circleci/slack@dev:<<pipeline.git.revision>>
+  slack: sandboxi/slack@dev:<<pipeline.git.revision>>
   orb-tools: circleci/orb-tools@11.1
 jobs:
   integration-test-templates:
@@ -106,9 +106,9 @@ workflows:
             tags:
               only: /.*/
       - orb-tools/publish:
-          orb-name: circleci/slack
+          orb-name: sandboxi/slack
           vcs-type: << pipeline.project.type >>
-          pub-type: production
+          pub-type: dev
           requires:
             - orb-tools/lint
             - orb-tools/review

@@ -25,8 +25,9 @@ workflows:
             tags:
               only: /.*/
       - orb-tools/publish:
-          orb-name: circleci/slack
+          orb-name: sandboxi/slack
           vcs-type: << pipeline.project.type >>
+          pub-type: dev
           requires:
             [orb-tools/lint, orb-tools/review, orb-tools/pack, shellcheck/check]
           # Use a context to hold your publishing token.
