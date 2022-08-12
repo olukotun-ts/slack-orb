@@ -28,6 +28,24 @@ BuildMessageBody() {
     SLACK_MSG_BODY=$(envsubst < /tmp/SLACK_MSG_BODY.json)
 }
 
+DetectOS() {
+    case $(uname -s) in
+        Darwin)
+            OS="macos"
+            ;;
+        Linux)
+            OS="linux"
+            ;;
+        MSYS*)
+            OS="windows"
+            ;;
+        *)
+            OS="unknown"
+            echo "OS is unknown. Result of command 'uname -s' is not one of [Darwin, Linux, MSYS*]"
+            ;;
+    esac
+}
+
 PostToSlack() {
     # Post once per channel listed by the channel parameter
     #    The channel must be modified in SLACK_MSG_BODY
@@ -74,19 +92,58 @@ ModifyCustomTemplate() {
     fi
 }
 
+InstallCurl() {
+    echo "Checking For CURL"
+    if command -v curl >/dev/null 2>&1; then
+        echo >&2 "CURL is already installed."
+        return $?
+    else
+        command -v curl >/dev/null 2>&1 || { echo >&2 "SLACK ORB ERROR: CURL is required. Please install"; exit 1; }
+        return $?
+    fi
+}
+
+# ToDo: Add Windows installation
+InstallEnvsubst() {
+    echo "Checking For envsubst"
+    if ! command -v envsubst >/dev/null 2>&1; then
+        echo "Missing dependency envsubst. Installing..."
+        case $OS in
+            linux)
+                apt-get install gettext-base
+                ;;
+            macos)
+                brew install gettext
+                ;;
+            *)
+                echo >&2 "SLACK ORB ERROR: envsubst is required. Please install"; exit 1; 
+        esac
+        command -v envsubst >/dev/null 2>&1
+        return $?
+    else
+        command -v envsubst >/dev/null 2>&1 || { echo >&2 "SLACK ORB ERROR: envsubst is required. Please install"; exit 1; }
+        return $?
+    fi
+}
+
 InstallJq() {
-    echo "Checking For JQ + CURL"
-    if command -v curl >/dev/null 2>&1 && ! command -v jq >/dev/null 2>&1; then
+    echo "Checking For jq"
+    if ! command -v jq >/dev/null 2>&1; then
         uname -a | grep Darwin > /dev/null 2>&1 && JQ_VERSION=jq-osx-amd64 || JQ_VERSION=jq-linux32
         curl -Ls -o "$JQ_PATH" https://github.com/stedolan/jq/releases/download/jq-1.6/"${JQ_VERSION}"
         chmod +x "$JQ_PATH"
         command -v jq >/dev/null 2>&1
         return $?
     else
-        command -v curl >/dev/null 2>&1 || { echo >&2 "SLACK ORB ERROR: CURL is required. Please install."; exit 1; }
-        command -v jq >/dev/null 2>&1 || { echo >&2 "SLACK ORB ERROR: JQ is required. Please install"; exit 1; }
+        command -v jq >/dev/null 2>&1 || { echo >&2 "SLACK ORB ERROR: jq is required. Please install"; exit 1; }
         return $?
     fi
+}
+
+InstallDependencies() {
+    InstallCurl
+    InstallJq
+    InstallEnvsubst
 }
 
 FilterBy() {
@@ -186,7 +243,8 @@ if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
     SetupEnvVars
     SetupLogs
     CheckEnvVars
-    InstallJq
+    DetectOS
+    InstallDependencies
     BuildMessageBody
     PostToSlack
 fi
