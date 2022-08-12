@@ -110,7 +110,8 @@ InstallEnvsubst() {
         echo "Missing dependency envsubst. Installing..."
         case $OS in
             linux)
-                apt-get install gettext-base
+                sudo apt-get update
+                sudo apt-get install gettext-base
                 ;;
             macos)
                 brew install gettext
