@@ -86,6 +86,16 @@ steps:
         echo 'export CCI_STATUS="pass"' > /tmp/SLACK_JOB_STATUS
   - run:
       when: always
+      name: Windows-Specific Set Up
+      command: |
+        pwd
+        if uname -s | grep "MSYS" >/dev/null; then 
+          dos2unix src/scripts/notify.sh
+          echo "dos2unix converted src/scripts/notify.sh"
+        fi
+      shell: bash
+  - run:
+      when: always
       name: Slack - Sending Notification
       environment:
         SLACK_PARAM_EVENT: "<<parameters.event>>"
@@ -105,4 +115,4 @@ steps:
         basic_on_hold_1: "<<include(message_templates/basic_on_hold_1.json)>>"
         basic_success_1: "<<include(message_templates/basic_success_1.json)>>"
       command: <<include(scripts/notify.sh)>>
-      shell: bash -eo pipefail
+      shell: bash
