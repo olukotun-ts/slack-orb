@@ -86,13 +86,8 @@ steps:
         echo 'export CCI_STATUS="pass"' > /tmp/SLACK_JOB_STATUS
   - run:
       when: always
-      name: Windows-Specific Set Up
-      command: |
-        pwd
-        if uname -s | grep "MSYS" >/dev/null; then 
-          dos2unix src/scripts/notify.sh
-          echo "dos2unix converted src/scripts/notify.sh"
-        fi
+      name: Convert Line Endings on Windows
+      command: if uname -s | grep MSYS; then dos2unix src/scripts/notify.sh; fi
       shell: bash
   - run:
       when: always
