@@ -246,6 +246,7 @@ SetupLogs() {
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
     . "/tmp/SLACK_JOB_STATUS"
+    echo "CCI_STATUS: $CCI_STATUS"
     ShouldPost
     SetupEnvVars
     SetupLogs
