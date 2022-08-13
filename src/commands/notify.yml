@@ -88,11 +88,6 @@ steps:
       shell: bash
   - run:
       when: always
-      name: Convert Line Endings on Windows
-      command: <<include(scripts/convert2unix.sh)>>
-      shell: bash
-  - run:
-      when: always
       name: Slack - Sending Notification
       environment:
         SLACK_PARAM_EVENT: "<<parameters.event>>"
