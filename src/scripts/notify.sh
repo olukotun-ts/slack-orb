@@ -27,6 +27,7 @@ BuildMessageBody() {
     SLACK_MSG_BODY=$(envsubst < /tmp/SLACK_MSG_BODY.json)
 }
 
+# ToDo: Add OS_VERSION for macos and windows.
 DetectOS() {
     case $(uname -s) in
         Darwin)
@@ -212,23 +213,23 @@ CheckEnvVars() {
     fi
 }
 
-ShouldPost() {
-    if [ "$CCI_STATUS" = "$SLACK_PARAM_EVENT" ] || [ "$SLACK_PARAM_EVENT" = "always" ]; then
-        # In the event the Slack notification would be sent, first ensure it is allowed to trigger
-        # on this branch or this tag.
-        FilterBy "$SLACK_PARAM_BRANCHPATTERN" "${CIRCLE_BRANCH:-}"
-        FilterBy "$SLACK_PARAM_TAGPATTERN" "${CIRCLE_TAG:-}"
+# ShouldPost() {
+#     if [ "$CCI_STATUS" = "$SLACK_PARAM_EVENT" ] || [ "$SLACK_PARAM_EVENT" = "always" ]; then
+#         # In the event the Slack notification would be sent, first ensure it is allowed to trigger
+#         # on this branch or this tag.
+#         FilterBy "$SLACK_PARAM_BRANCHPATTERN" "${CIRCLE_BRANCH:-}"
+#         FilterBy "$SLACK_PARAM_TAGPATTERN" "${CIRCLE_TAG:-}"
 
-        echo "Posting Status"
-    else
-        # dont send message.
-        echo "NO SLACK ALERT"
-        echo 
-        echo "This command is set to send an alert on: $SLACK_PARAM_EVENT"
-        echo "Current status: ${CCI_STATUS}"
-        exit 0
-    fi
-}
+#         echo "Posting Status"
+#     else
+#         # dont send message.
+#         echo "NO SLACK ALERT"
+#         echo 
+#         echo "This command is set to send an alert on: $SLACK_PARAM_EVENT"
+#         echo "Current status: ${CCI_STATUS}"
+#         exit 0
+#     fi
+# }
 
 SetupLogs() {
     if [ "$SLACK_PARAM_DEBUG" -eq 1 ]; then
@@ -246,7 +247,7 @@ SetupLogs() {
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
     . "/tmp/SLACK_JOB_STATUS"
-    ShouldPost
+    # ShouldPost
     SetupEnvVars
     SetupLogs
     CheckEnvVars
