@@ -86,11 +86,11 @@ steps:
       command: |
         echo 'export CCI_STATUS="pass"' > /tmp/SLACK_JOB_STATUS
       shell: bash
-  - run:
-      when: always
-      name: Convert Line Endings on Windows
-      command: <<include(scripts/convert2unix.sh)>>
-      shell: bash
+  # - run:
+  #     when: always
+  #     name: Convert Line Endings on Windows
+  #     command: <<include(scripts/convert2unix.sh)>>
+  #     shell: bash
   - run:
       when: always
       name: Slack - Sending Notification
