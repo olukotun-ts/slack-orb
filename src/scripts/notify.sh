@@ -223,7 +223,6 @@ ShouldPost() {
     else
         # dont send message.
         echo "NO SLACK ALERT"
-        echo 
         echo "This command is set to send an alert on: $SLACK_PARAM_EVENT"
         echo "Current status: ${CCI_STATUS}"
         exit 0
@@ -243,9 +242,9 @@ SetupLogs() {
 
 # Will not run if sourced from another script.
 # This is done so this script may be tested.
-# ORB_TEST_ENV="bats-core"
-# if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
-    # . "/tmp/SLACK_JOB_STATUS"  # Is this file correctly formatted for Windows? Missing EOF?
+ORB_TEST_ENV="bats-core"
+if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
+    . "/tmp/SLACK_JOB_STATUS"  # Is this file correctly formatted for Windows? Missing EOF?
     ShouldPost
     SetupEnvVars
     SetupLogs
@@ -254,4 +253,4 @@ SetupLogs() {
     InstallDependencies
     BuildMessageBody
     PostToSlack
-# fi
+fi
