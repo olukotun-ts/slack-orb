@@ -245,7 +245,7 @@ SetupLogs() {
 # This is done so this script may be tested.
 ORB_TEST_ENV="bats-core"
 if [ "${0#*"$ORB_TEST_ENV"}" = "$0" ]; then
-    # . "/tmp/SLACK_JOB_STATUS"
+    # . "/tmp/SLACK_JOB_STATUS"  # Is this file correctly formatted for Windows? Missing EOF?
     ShouldPost
     SetupEnvVars
     SetupLogs
